@@ -6,7 +6,7 @@ public class EnergyBar : MonoBehaviour
 {
     public Image energyBarFill;  // Reference to the UI image for the energy bar's fill
     public TextMeshProUGUI energyText;  // Reference to the UI text for the energy value
-    public float maxEnergy = 200f;  // Maximum energy value
+    public float maxEnergy = 500f;  // Maximum energy value
     private float currentEnergy;  // Current energy value
 
     void Start()
