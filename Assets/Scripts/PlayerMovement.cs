@@ -8,7 +8,8 @@ public class PlayerMovement : MonoBehaviour
     public float horizontalSpeed = 5f;  // Speed of the player moving left and right
     public float smoothing = 0.5f;  // Smoothing factor for the player's movement
     public float smoothAccelerationTime = 0.2f;  // Time to smooth acceleration/deceleration
-    public float energyDrainRate = 1f;  // Rate at which energy is drained
+    public float baseEnergyDrainRate = 0.5f;  // Base energy drain rate for the slowest speed
+    public float energyExponent = 2f;  // Exponent to increase energy drain exponentially with speed
     private Rigidbody2D rb; 
     private float targetXPosition;  // Target X position for the player
     private float velocityX = 0f;  // Velocity of the player in the X direction
@@ -55,11 +56,9 @@ public class PlayerMovement : MonoBehaviour
         // Set the new velocity with the smoothed X movement
         rb.velocity = new Vector2((smoothX - rb.position.x) * horizontalSpeed, rb.velocity.y);
 
-        // Drain energy over time as the player moves upward
-        if (rb.velocity.y > 0)  // If the player is moving up
-        {
-            energyBar.DecreaseEnergy(energyDrainRate * Time.deltaTime);  // Decrease energy over time
-        }
+        // Drain energy based on the player's current vertical speed, with exponential growth
+        DrainEnergyBasedOnSpeed();
+
     }
 
     // Get the highest speed based on key presses
@@ -96,6 +95,19 @@ public class PlayerMovement : MonoBehaviour
     public float GetCurrentSpeed()
     {
         return currentVerticalSpeed;
+    }
+
+    // Drain energy based on the current speed, using exponential growth
+    private void DrainEnergyBasedOnSpeed()
+    {
+        if (currentVerticalSpeed > 0)  // Only drain energy if the player is moving upward
+        {
+            // Calculate the energy drain rate based on the current speed, with exponential scaling
+            float energyDrain = baseEnergyDrainRate * Mathf.Pow(currentVerticalSpeed, energyExponent);
+
+            // Decrease energy in the energy bar
+            energyBar.DecreaseEnergy(energyDrain * Time.deltaTime);
+        }
     }
 
     // Detect player crossing the start or finish lines
