@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private float verticalSpeedVelocity = 0f;  // Used by SmoothDamp for smooth vertical speed transitions
 
     public EnergyBar energyBar;  // Reference to the EnergyBar script
+    private bool isOutOfEnergy = false;  // Tracks whether the player is out of energy
 
     void Start()
     {
@@ -33,8 +34,18 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Get the highest speed based on key presses
-        float targetVerticalSpeed = GetMaxSpeed();
+        // Check if player is out of energy
+        if (energyBar.GetCurrentEnergy() <= 0)
+        {
+            isOutOfEnergy = true;
+        }
+        else
+        {
+            isOutOfEnergy = false;
+        }
+
+        // Get the highest speed based on key presses (or slow down to 1f if out of energy or no keys are pressed)
+        float targetVerticalSpeed = isOutOfEnergy || !AnyKeyPressed() ? 1f : GetMaxSpeed();
 
         // Smooth the transition between the current speed and the target speed using SmoothDamp
         currentVerticalSpeed = Mathf.SmoothDamp(currentVerticalSpeed, targetVerticalSpeed, ref verticalSpeedVelocity, smoothAccelerationTime);
@@ -57,8 +68,10 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2((smoothX - rb.position.x) * horizontalSpeed, rb.velocity.y);
 
         // Drain energy based on the player's current vertical speed, with exponential growth
-        DrainEnergyBasedOnSpeed();
-
+        if (!isOutOfEnergy) // Don't drain energy if the player is out of energy
+        {
+            DrainEnergyBasedOnSpeed();
+        }
     }
 
     // Get the highest speed based on key presses
@@ -108,6 +121,13 @@ public class PlayerMovement : MonoBehaviour
             // Decrease energy in the energy bar
             energyBar.DecreaseEnergy(energyDrain * Time.deltaTime);
         }
+    }
+
+    // Check if any of the movement keys are pressed
+    private bool AnyKeyPressed()
+    {
+        return Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || 
+               Input.GetKey(KeyCode.F) || Input.GetKey(KeyCode.Space);
     }
 
     // Detect player crossing the start or finish lines

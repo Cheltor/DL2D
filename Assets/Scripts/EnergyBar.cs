@@ -51,6 +51,12 @@ public class EnergyBar : MonoBehaviour
         UpdateEnergyBar();
     }
 
+    // Get the current energy value
+    public float GetCurrentEnergy()
+    {
+        return currentEnergy;
+    }
+
     // Update the energy bar UI
     private void UpdateEnergyBar()
     {
