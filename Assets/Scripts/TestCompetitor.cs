@@ -15,7 +15,7 @@ public class TestCompetitor : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         // Make the Rigidbody kinematic so it won't react to physics forces
-        rb.isKinematic = true;
+        rb.isKinematic = false;
 
         // Optional: You can also freeze position or rotation if you need additional control
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;  // Prevent any rotation if collision occurs

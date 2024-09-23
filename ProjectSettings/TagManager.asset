@@ -6,6 +6,7 @@ TagManager:
   tags:
   - StartLine
   - FinishLine
+  - Competitor
   layers:
   - Default
   - TransparentFX
